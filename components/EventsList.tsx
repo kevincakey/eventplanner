@@ -1,5 +1,7 @@
 // app/page.tsx
 import { createClient } from "@/utils/supabase/server";
+import EventCell from "./EventCell";
+import { Event } from "@/types";
 
 export default async function EventsList() {
   // Fetch data from Supabase
@@ -22,15 +24,10 @@ export default async function EventsList() {
   // Render the list of events
   return (
     <div>
-      
       <h1>Events List</h1>
-      <ul>
-        {eventslist.map((event, index) => (
-          <li key={index}>
-            <pre>{JSON.stringify(event, null, 2)}</pre>
-          </li>
-        ))}
-      </ul>
+      {eventslist.map((event: Event) => (
+        <EventCell key={event.id} event={event} />
+      ))}
     </div>
   );
 }
