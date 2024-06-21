@@ -1,48 +1,156 @@
-import React from "react";
+// components/EventEditor.tsx
+"use client";
+import React, { useState, useEffect } from "react";
+import { Event } from "../types";
+import { supabase } from "../utils/supabaseClient";
 
-const EventEditor = () => {
+interface EventEditorProps {
+  event: Event | null;
+  onClose: () => void;
+  onSave: (event: Event) => void;
+}
+
+const EventEditor: React.FC<EventEditorProps> = ({
+  event,
+  onClose,
+  onSave,
+}) => {
+  const [eventData, setEventData] = useState<Event>(
+    event || {
+      id: 0,
+      created_at: "",
+      title: "",
+      description: "",
+      startdate: "",
+      starttime: "",
+      enddate: "",
+      endtime: "",
+      location: "",
+      links: "",
+      subdescription: "",
+    }
+  );
+
+  useEffect(() => {
+    if (event) setEventData(event);
+  }, [event]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setEventData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      if (eventData.id) {
+        // Update existing event
+        const { data, error } = await supabase
+          .from("events")
+          .update(eventData)
+          .eq("id", eventData.id);
+
+        if (error) throw error;
+      } else {
+        // Create new event
+        const { data, error } = await supabase
+          .from("events")
+          .insert([eventData]);
+
+        if (error) throw error;
+      }
+      onSave(eventData);
+    } catch (error) {
+      console.error("Error saving event:", error);
+    }
+  };
+
   return (
-    <form>
-      <label>EDIT LIST</label>
-      <div>
-        <label>Title</label>
-        <input type="text" />
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+      <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-4">
+          {eventData.id ? "Edit Event" : "Add Event"}
+        </h2>
+        <input
+          name="title"
+          value={eventData.title}
+          onChange={handleChange}
+          placeholder="Title"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <textarea
+          name="description"
+          value={eventData.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md h-32"
+        />
+        <input
+          name="startdate"
+          value={eventData.startdate}
+          onChange={handleChange}
+          placeholder="Start Date"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="starttime"
+          value={eventData.starttime}
+          onChange={handleChange}
+          placeholder="Start Time"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="enddate"
+          value={eventData.enddate}
+          onChange={handleChange}
+          placeholder="End Date"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="endtime"
+          value={eventData.endtime}
+          onChange={handleChange}
+          placeholder="End Time"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="location"
+          value={eventData.location}
+          onChange={handleChange}
+          placeholder="Location"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="links"
+          value={eventData.links}
+          onChange={handleChange}
+          placeholder="Links"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="subdescription"
+          value={eventData.subdescription}
+          onChange={handleChange}
+          placeholder="Subdescription"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <div className="flex justify-between">
+          <button
+            onClick={handleSave}
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            Save
+          </button>
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
-      <div>
-        <label>Start Date</label>
-        <input type="date" />
-      </div>
-      <div>
-        <label>End Date</label>
-        <input type="date" />
-      </div>
-      <div>
-        <label>Start Time</label>
-        <input type="time" />
-      </div>
-      <div>
-        <label>End Time</label>
-        <input type="time" />
-      </div>
-      <div>
-        <label>Location</label>
-        <input type="text" />
-      </div>
-      <div>
-        <label>Links</label>
-        <input type="url" />
-      </div>
-      <div>
-        <label>Description1</label>
-        <textarea />
-      </div>
-      <div>
-        <label>Description2</label>
-        <textarea />
-      </div>
-      <button type="submit">Save</button>
-      <button>Cancel</button>
-    </form>
+    </div>
   );
 };
 
