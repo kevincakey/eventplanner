@@ -1,33 +1,36 @@
-// app/page.tsx
-import { createClient } from "@/utils/supabase/server";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { supabase } from "../utils/supabaseClient";
 import EventCell from "./EventCell";
 import { Event } from "@/types";
 
-export default async function EventsList() {
+const EventsList: React.FC = () => {
   // Fetch data from Supabase
-  const supabase = createClient();
-  const { data: eventslist, error } = await supabase
-    .from("eventslist")
-    .select();
+  const [events, setEvents] = useState([]);
+  const [newEvent, setNewEvent] = useState("");
 
-  // Check for errors
-  if (error) {
-    console.error("Error fetching events list:", error);
-    return <div>Error loading events.</div>;
-  }
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  // If no data, return a message
-  if (!eventslist || eventslist.length === 0) {
-    return <div>No events found.</div>;
-  }
+  const fetchEvents = async () => {
+    const { data, error } = await supabase.from("eventslist").select("*");
+    if (error) {
+      console.error("Error fetching events:", error);
+    } else {
+      setEvents((data || []).sort((a, b) => a.id - b.id));
+    }
+  };
 
-  // Render the list of events
   return (
     <div>
       <h1>Events List</h1>
-      {eventslist.map((event: Event) => (
+      {events.map((event: Event) => (
         <EventCell key={event.id} event={event} />
       ))}
     </div>
   );
-}
+};
+
+export default EventsList;
