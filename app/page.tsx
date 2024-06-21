@@ -1,6 +1,5 @@
 import AuthButton from "../components/AuthButton";
 import EventsList from "../components/EventsList";
-import EventForm from "../components/EventForm";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Index() {
@@ -10,7 +9,6 @@ export default async function Index() {
         <AuthButton />
       </div>
       <EventsList />
-      {/* <EventForm /> */}
     </div>
   );
 }

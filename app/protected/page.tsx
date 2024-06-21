@@ -1,6 +1,7 @@
 import AuthButton from "@/components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import EventsList from "../../components/EventsList";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
@@ -22,6 +23,7 @@ export default async function ProtectedPage() {
           </div>
         </nav>
       </div>
+      <EventsList />
     </div>
   );
 }

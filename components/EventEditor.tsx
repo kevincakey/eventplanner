@@ -1,6 +1,6 @@
 import React from "react";
 
-const EventForm = () => {
+const EventEditor = () => {
   return (
     <form>
       <label>EDIT LIST</label>
@@ -46,4 +46,4 @@ const EventForm = () => {
   );
 };
 
-export default EventForm;
+export default EventEditor;
