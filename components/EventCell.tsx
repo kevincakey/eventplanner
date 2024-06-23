@@ -14,7 +14,7 @@ const EventCell: React.FC<EventCellProps> = ({ event, onEdit, onDelete }) => {
   const handleDelete = async () => {
     try {
       const { error } = await supabase
-        .from("events")
+        .from("eventslist")
         .delete()
         .eq("id", event.id);
 

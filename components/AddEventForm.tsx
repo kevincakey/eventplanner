@@ -1,39 +1,27 @@
-// components/EventEditor.tsx
+// components/AddEventForm.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
 
-interface EventEditorProps {
-  event: Event | null;
+interface AddEventFormProps {
   onClose: () => void;
   onSave: (event: Event) => void;
 }
 
-const EventEditor: React.FC<EventEditorProps> = ({
-  event,
-  onClose,
-  onSave,
-}) => {
-  const [eventData, setEventData] = useState<Event>(
-    event || {
-      id: 0,
-      created_at: "",
-      title: "",
-      description: "",
-      startdate: "",
-      starttime: "",
-      enddate: "",
-      endtime: "",
-      location: "",
-      links: "",
-      subdescription: "",
-    }
-  );
-
-  useEffect(() => {
-    if (event) setEventData(event);
-  }, [event]);
+const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
+  const [eventData, setEventData] = useState<Event>({
+    created_at: new Date().toISOString(),
+    title: "",
+    description: "",
+    startdate: "",
+    starttime: "",
+    enddate: "",
+    endtime: "",
+    location: "",
+    links: "",
+    subdescription: "",
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,36 +32,25 @@ const EventEditor: React.FC<EventEditorProps> = ({
 
   const handleSave = async () => {
     try {
-      if (eventData.id) {
-        // Update existing event
-        const { data, error } = await supabase
-          .from("events")
-          .update(eventData)
-          .eq("id", eventData.id);
+      // Create new event
+      const { data, error } = await supabase
+        .from("eventslist")
+        .insert([eventData]);
 
-        if (error) throw error;
-      } else {
-        // Create new event
-        const { data, error } = await supabase
-          .from("events")
-          .insert([eventData]);
-
-        if (error) throw error;
-      }
-      onSave(eventData);
+      if (error) throw error;
+      onSave(data); // Assumes that `data` is an array with the newly created event
     } catch (error) {
-      console.error("Error saving event:", error);
+      console.error("Error creating event:", error);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center text-black bg-gray-900 bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">
-          {eventData.id ? "Edit Event" : "Add Event"}
-        </h2>
+        <h2 className="text-2xl font-bold mb-4">Add Event</h2>
         <input
           name="title"
+          type="text"
           value={eventData.title}
           onChange={handleChange}
           placeholder="Title"
@@ -87,28 +64,39 @@ const EventEditor: React.FC<EventEditorProps> = ({
           className="w-full mb-4 p-2 border border-gray-300 rounded-md h-32"
         />
         <input
+          name="subdescription"
+          value={eventData.subdescription}
+          onChange={handleChange}
+          placeholder="Subdescription"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
           name="startdate"
+          type="date"
           value={eventData.startdate}
           onChange={handleChange}
           placeholder="Start Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
-          name="starttime"
-          value={eventData.starttime}
-          onChange={handleChange}
-          placeholder="Start Time"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
           name="enddate"
+          type="date"
           value={eventData.enddate}
           onChange={handleChange}
           placeholder="End Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
+          name="starttime"
+          type="time"
+          value={eventData.starttime}
+          onChange={handleChange}
+          placeholder="Start Time"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
           name="endtime"
+          type="time"
           value={eventData.endtime}
           onChange={handleChange}
           placeholder="End Time"
@@ -123,16 +111,10 @@ const EventEditor: React.FC<EventEditorProps> = ({
         />
         <input
           name="links"
+          type="url"
           value={eventData.links}
           onChange={handleChange}
           placeholder="Links"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
-          name="subdescription"
-          value={eventData.subdescription}
-          onChange={handleChange}
-          placeholder="Subdescription"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <div className="flex justify-between">
@@ -154,4 +136,4 @@ const EventEditor: React.FC<EventEditorProps> = ({
   );
 };
 
-export default EventEditor;
+export default AddEventForm;

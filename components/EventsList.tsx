@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
 import EventCell from "./EventCell";
-import EventEditor from "./EventEditor";
+import AddEventForm from "./AddEventForm";
+import EditEventForm from "./EditEventForm";
 
 const EventsList: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [addingNewEvent, setAddingNewEvent] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -16,7 +18,7 @@ const EventsList: React.FC = () => {
       const { data, error } = await supabase.from("eventslist").select("*");
 
       if (error) console.error("Error fetching events:", error);
-      else setEvents(data || []);
+      else setEvents((data || []).sort((a, b) => a.id - b.id));
     };
 
     fetchEvents();
@@ -32,6 +34,7 @@ const EventsList: React.FC = () => {
   };
 
   const handleSave = (event: Event) => {
+    fetchEvents();
     setEvents((prevEvents) => {
       const updatedEvents = prevEvents.map((e) =>
         e.id === event.id ? event : e
@@ -39,13 +42,14 @@ const EventsList: React.FC = () => {
       return event.id ? updatedEvents : [...prevEvents, event];
     });
     setIsEditing(false);
+    setAddingNewEvent(false);
   };
 
   return (
     <div className="flex flex-col items-center px-4 py-8">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-4">Events List</h1>
+      <h1 className="text-3xl font-semibold text-white mb-4">Events List</h1>
       <button
-        onClick={() => setIsEditing(true)}
+        onClick={() => setAddingNewEvent(true)}
         className="mb-4 px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
       >
         Add Event
@@ -60,10 +64,16 @@ const EventsList: React.FC = () => {
           />
         ))}
       </div>
-      {isEditing && (
-        <EventEditor
+      {isEditing && editingEvent && (
+        <EditEventForm
           event={editingEvent}
           onClose={() => setIsEditing(false)}
+          onSave={handleSave}
+        />
+      )}
+      {addingNewEvent && (
+        <AddEventForm
+          onClose={() => setAddingNewEvent(false)}
           onSave={handleSave}
         />
       )}
