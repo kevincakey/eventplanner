@@ -14,15 +14,21 @@ const EventsList: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const { data, error } = await supabase.from("eventslist").select("*");
-
-      if (error) console.error("Error fetching events:", error);
-      else setEvents((data || []).sort((a, b) => a.id - b.id));
-    };
-
     fetchEvents();
   }, []);
+
+  const fetchEvents = async () => {
+    const { data, error } = await supabase.from("eventslist").select("*");
+
+    if (error) console.error("Error fetching events:", error);
+    else setEvents((data || []).sort((a, b) => a.id - b.id));
+  };
+
+  const handleAdd = (event: Event) => {
+    fetchEvents();
+    setIsEditing(false);
+    setAddingNewEvent(false);
+  };
 
   const handleEdit = (event: Event) => {
     setEditingEvent(event);
@@ -74,7 +80,7 @@ const EventsList: React.FC = () => {
       {addingNewEvent && (
         <AddEventForm
           onClose={() => setAddingNewEvent(false)}
-          onSave={handleSave}
+          onAdd={handleAdd}
         />
       )}
     </div>
