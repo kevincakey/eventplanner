@@ -14,15 +14,15 @@ const EventsList: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
+    const fetchEvents = async () => {
+      const { data, error } = await supabase.from("eventslist").select("*");
+
+      if (error) console.error("Error fetching events:", error);
+      else setEvents((data || []).sort((a, b) => a.id - b.id));
+    };
+
     fetchEvents();
   }, []);
-
-  const fetchEvents = async () => {
-    const { data, error } = await supabase.from("eventslist").select("*");
-
-    if (error) console.error("Error fetching events:", error);
-    else setEvents((data || []).sort((a, b) => a.id - b.id));
-  };
 
   const handleEdit = (event: Event) => {
     setEditingEvent(event);
@@ -33,8 +33,14 @@ const EventsList: React.FC = () => {
     setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
   };
 
-  const handleAdd = (event: Event) => {
+  const handleSave = (event: Event) => {
     fetchEvents();
+    setEvents((prevEvents) => {
+      const updatedEvents = prevEvents.map((e) =>
+        e.id === event.id ? event : e
+      );
+      return event.id ? updatedEvents : [...prevEvents, event];
+    });
     setIsEditing(false);
     setAddingNewEvent(false);
   };
@@ -58,10 +64,17 @@ const EventsList: React.FC = () => {
           />
         ))}
       </div>
+      {isEditing && editingEvent && (
+        <EditEventForm
+          event={editingEvent}
+          onClose={() => setIsEditing(false)}
+          onSave={handleSave}
+        />
+      )}
       {addingNewEvent && (
         <AddEventForm
           onClose={() => setAddingNewEvent(false)}
-          onAdd={handleAdd}
+          onSave={handleSave}
         />
       )}
     </div>

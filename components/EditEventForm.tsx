@@ -1,27 +1,25 @@
-// components/AddEventForm.tsx
+// components/EditEventForm.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
 
-interface AddEventFormProps {
+interface EditEventFormProps {
+  event: Event;
   onClose: () => void;
   onSave: (event: Event) => void;
 }
 
-const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
-  const [eventData, setEventData] = useState<Event>({
-    created_at: new Date().toISOString(),
-    title: "",
-    description: "",
-    startdate: "",
-    starttime: "",
-    enddate: "",
-    endtime: "",
-    location: "",
-    links: "",
-    subdescription: "",
-  });
+const EditEventForm: React.FC<EditEventFormProps> = ({
+  event,
+  onClose,
+  onSave,
+}) => {
+  const [eventData, setEventData] = useState<Event>(event);
+
+  useEffect(() => {
+    if (event) setEventData(event);
+  }, [event]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,25 +30,25 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
 
   const handleSave = async () => {
     try {
-      // Create new event
+      // Update existing event
       const { data, error } = await supabase
         .from("eventslist")
-        .insert([eventData]);
+        .update(eventData)
+        .eq("id", eventData.id);
 
       if (error) throw error;
-      onSave(data); // Assumes that `data` is an array with the newly created event
+      onSave(eventData);
     } catch (error) {
-      console.error("Error creating event:", error);
+      console.error("Error updating event:", error);
     }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center text-black bg-gray-900 bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Add Event</h2>
+        <h2 className="text-2xl font-bold mb-4">Edit Event</h2>
         <input
           name="title"
-          type="text"
           value={eventData.title}
           onChange={handleChange}
           placeholder="Title"
@@ -64,39 +62,28 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
           className="w-full mb-4 p-2 border border-gray-300 rounded-md h-32"
         />
         <input
-          name="subdescription"
-          value={eventData.subdescription}
-          onChange={handleChange}
-          placeholder="Subdescription"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
           name="startdate"
-          type="date"
           value={eventData.startdate}
           onChange={handleChange}
           placeholder="Start Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
-          name="enddate"
-          type="date"
-          value={eventData.enddate}
-          onChange={handleChange}
-          placeholder="End Date"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
           name="starttime"
-          type="time"
           value={eventData.starttime}
           onChange={handleChange}
           placeholder="Start Time"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
+          name="enddate"
+          value={eventData.enddate}
+          onChange={handleChange}
+          placeholder="End Date"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
           name="endtime"
-          type="time"
           value={eventData.endtime}
           onChange={handleChange}
           placeholder="End Time"
@@ -111,10 +98,16 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
         />
         <input
           name="links"
-          type="url"
           value={eventData.links}
           onChange={handleChange}
           placeholder="Links"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          name="subdescription"
+          value={eventData.subdescription}
+          onChange={handleChange}
+          placeholder="Subdescription"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <div className="flex justify-between">
@@ -136,4 +129,4 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
   );
 };
 
-export default AddEventForm;
+export default EditEventForm;
