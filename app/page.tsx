@@ -1,5 +1,5 @@
 import AuthButton from "../components/AuthButton";
-import EventsList from "../components/EventsList";
+import ViewEventsList from "../components/ViewEventsList";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Index() {
@@ -8,7 +8,7 @@ export default async function Index() {
       <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
         <AuthButton />
       </div>
-      <EventsList />
+      <ViewEventsList />
     </div>
   );
 }
