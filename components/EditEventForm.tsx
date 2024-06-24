@@ -1,13 +1,13 @@
-// components/EditEventForm.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
 
 interface EditEventFormProps {
   event: Event;
   onClose: () => void;
-  onSave: (event: Event) => void;
+  onSave: () => void;
 }
 
 const EditEventForm: React.FC<EditEventFormProps> = ({
@@ -16,10 +16,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
   onSave,
 }) => {
   const [eventData, setEventData] = useState<Event>(event);
-
-  useEffect(() => {
-    if (event) setEventData(event);
-  }, [event]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -30,14 +26,12 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
 
   const handleSave = async () => {
     try {
-      // Update existing event
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("eventslist")
         .update(eventData)
         .eq("id", eventData.id);
-
       if (error) throw error;
-      onSave(eventData);
+      onSave();
     } catch (error) {
       console.error("Error updating event:", error);
     }
@@ -64,9 +58,10 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
         />
         <input
           name="subdescription"
+          type="text"
           value={eventData.subdescription}
           onChange={handleChange}
-          placeholder="Subdescription"
+          placeholder="Sub Description"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
@@ -74,7 +69,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
           type="date"
           value={eventData.startdate}
           onChange={handleChange}
-          placeholder="Start Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
@@ -82,7 +76,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
           type="date"
           value={eventData.enddate}
           onChange={handleChange}
-          placeholder="End Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
@@ -90,7 +83,6 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
           type="time"
           value={eventData.starttime}
           onChange={handleChange}
-          placeholder="Start Time"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
@@ -98,11 +90,11 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
           type="time"
           value={eventData.endtime}
           onChange={handleChange}
-          placeholder="End Time"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
           name="location"
+          type="text"
           value={eventData.location}
           onChange={handleChange}
           placeholder="Location"
@@ -118,16 +110,16 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
         />
         <div className="flex justify-between">
           <button
-            onClick={handleSave}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-          >
-            Save
-          </button>
-          <button
             onClick={onClose}
-            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
           >
             Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+          >
+            Save
           </button>
         </div>
       </div>

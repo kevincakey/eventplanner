@@ -1,5 +1,5 @@
-// components/EventCell.tsx
 "use client";
+
 import React from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
@@ -17,7 +17,6 @@ const EventCell: React.FC<EventCellProps> = ({ event, onEdit, onDelete }) => {
         .from("eventslist")
         .delete()
         .eq("id", event.id);
-
       if (error) throw error;
       onDelete(event.id);
     } catch (error) {

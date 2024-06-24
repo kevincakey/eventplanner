@@ -1,5 +1,5 @@
-// components/EventsList.tsx
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Event } from "../types";
 import { supabase } from "../utils/supabaseClient";
@@ -19,14 +19,15 @@ const EventsList: React.FC = () => {
 
   const fetchEvents = async () => {
     const { data, error } = await supabase.from("eventslist").select("*");
-
-    if (error) console.error("Error fetching events:", error);
-    else setEvents((data || []).sort((a, b) => a.id - b.id));
+    if (error) {
+      console.error("Error fetching events:", error);
+    } else {
+      setEvents((data || []).sort((a, b) => a.id - b.id));
+    }
   };
 
-  const handleAdd = (event: Event) => {
+  const handleAdd = () => {
     fetchEvents();
-    setIsEditing(false);
     setAddingNewEvent(false);
   };
 
@@ -39,14 +40,8 @@ const EventsList: React.FC = () => {
     setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
   };
 
-  const handleSave = (event: Event) => {
+  const handleSave = () => {
     fetchEvents();
-    setEvents((prevEvents) => {
-      const updatedEvents = prevEvents.map((e) =>
-        e.id === event.id ? event : e
-      );
-      return event.id ? updatedEvents : [...prevEvents, event];
-    });
     setIsEditing(false);
     setAddingNewEvent(false);
   };
