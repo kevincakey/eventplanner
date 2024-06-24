@@ -6,10 +6,10 @@ import { supabase } from "../utils/supabaseClient";
 
 interface AddEventFormProps {
   onClose: () => void;
-  onSave: (event: Event) => void;
+  onAdd: (event: Event) => void;
 }
 
-const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
+const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onAdd }) => {
   const [eventData, setEventData] = useState<Event>({
     created_at: new Date().toISOString(),
     title: "",
@@ -30,7 +30,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
     setEventData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
+  const handleAdd = async () => {
     try {
       // Create new event
       const { data, error } = await supabase
@@ -38,7 +38,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
         .insert([eventData]);
 
       if (error) throw error;
-      onSave(data); // Assumes that `data` is an array with the newly created event
+      onAdd(data); // Assumes that `data` is an array with the newly created event
     } catch (error) {
       console.error("Error creating event:", error);
     }
@@ -119,7 +119,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({ onClose, onSave }) => {
         />
         <div className="flex justify-between">
           <button
-            onClick={handleSave}
+            onClick={handleAdd}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
           >
             Save
