@@ -49,6 +49,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
         <h2 className="text-2xl font-bold mb-4">Edit Event</h2>
         <input
           name="title"
+          type="text"
           value={eventData.title}
           onChange={handleChange}
           placeholder="Title"
@@ -62,28 +63,39 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
           className="w-full mb-4 p-2 border border-gray-300 rounded-md h-32"
         />
         <input
+          name="subdescription"
+          value={eventData.subdescription}
+          onChange={handleChange}
+          placeholder="Subdescription"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
           name="startdate"
+          type="date"
           value={eventData.startdate}
           onChange={handleChange}
           placeholder="Start Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
-          name="starttime"
-          value={eventData.starttime}
-          onChange={handleChange}
-          placeholder="Start Time"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
           name="enddate"
+          type="date"
           value={eventData.enddate}
           onChange={handleChange}
           placeholder="End Date"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <input
+          name="starttime"
+          type="time"
+          value={eventData.starttime}
+          onChange={handleChange}
+          placeholder="Start Time"
+          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
+        />
+        <input
           name="endtime"
+          type="time"
           value={eventData.endtime}
           onChange={handleChange}
           placeholder="End Time"
@@ -98,16 +110,10 @@ const EditEventForm: React.FC<EditEventFormProps> = ({
         />
         <input
           name="links"
+          type="url"
           value={eventData.links}
           onChange={handleChange}
           placeholder="Links"
-          className="w-full mb-4 p-2 border border-gray-300 rounded-md"
-        />
-        <input
-          name="subdescription"
-          value={eventData.subdescription}
-          onChange={handleChange}
-          placeholder="Subdescription"
           className="w-full mb-4 p-2 border border-gray-300 rounded-md"
         />
         <div className="flex justify-between">

@@ -30,19 +30,29 @@ const EventCell: React.FC<EventCellProps> = ({ event, onEdit, onDelete }) => {
       {event.title && (
         <h2 className="text-xl font-bold text-gray-900">{event.title}</h2>
       )}
+      {event.description && (
+        <p className="text-gray-600">
+          <strong>Description:</strong> {event.description}
+        </p>
+      )}
+      {event.subdescription && (
+        <p className="text-gray-600">
+          <strong>Sub Description:</strong> {event.subdescription}
+        </p>
+      )}
       {event.startdate && (
         <p className="text-gray-600">
           <strong>Start Date:</strong> {event.startdate}
         </p>
       )}
-      {event.starttime && (
-        <p className="text-gray-600">
-          <strong>Start Time:</strong> {event.starttime}
-        </p>
-      )}
       {event.enddate && (
         <p className="text-gray-600">
           <strong>End Date:</strong> {event.enddate}
+        </p>
+      )}
+      {event.starttime && (
+        <p className="text-gray-600">
+          <strong>Start Time:</strong> {event.starttime}
         </p>
       )}
       {event.endtime && (
@@ -66,16 +76,6 @@ const EventCell: React.FC<EventCellProps> = ({ event, onEdit, onDelete }) => {
           >
             View Location
           </a>
-        </p>
-      )}
-      {event.description && (
-        <p className="text-gray-600">
-          <strong>Description:</strong> {event.description}
-        </p>
-      )}
-      {event.subdescription && (
-        <p className="text-gray-600">
-          <strong>Sub Description:</strong> {event.subdescription}
         </p>
       )}
       <div className="flex space-x-4">
